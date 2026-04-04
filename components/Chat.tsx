@@ -38,8 +38,15 @@ export default function ChatBox({
   const [input, setInput] = useState("");
   const [showEmojiTray, setShowEmojiTray] = useState(false);
   const emojiTrayRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const { messages, sendMessage, isLoading, typingUserIds, startTyping, stopTyping } =
     useChat(conversationId);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     setInput("");
@@ -175,7 +182,7 @@ export default function ChatBox({
         </div>
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-6 py-5">
+      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-6 py-5 scroll-smooth">
         {isLoading ? (
           <div className="flex flex-1 items-center justify-center py-10">
             <VoxLoader size="sm" label="Loading messages..." />

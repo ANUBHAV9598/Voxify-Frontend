@@ -81,6 +81,13 @@ export async function apiRequest<T>(
         ? responseData.message
         : "Request failed";
 
+    if (response.status === 401 && !path.includes("/login")) {
+      clearStoredToken();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
+
     throw new ApiError(message, response.status, responseData);
   }
 
