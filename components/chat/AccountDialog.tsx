@@ -62,10 +62,10 @@ export default function AccountDialog({
       <div className="mt-3 w-full max-w-[20rem] rounded-[1.4rem] border border-black/8 bg-white p-4 shadow-2xl dark:border-white/8 dark:bg-[#202c33]">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+            <p className="text-[15px] font-semibold" style={{ color: "var(--foreground)" }}>
               Account
             </p>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-[13px]" style={{ color: "var(--fg-muted)" }}>
               Manage theme, password, and session.
             </p>
           </div>
@@ -139,11 +139,11 @@ export default function AccountDialog({
           </div>
         </div>
 
-        <div className="mt-3 rounded-[1.2rem] bg-[#f7f5f3] p-3 dark:bg-[#111b21]">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
+        <div className="mt-3 rounded-[1.2rem] p-3" style={{ backgroundColor: "var(--panel-muted)" }}>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--fg-subtle)" }}>
             Forgot password
           </p>
-          <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-1.5 text-[13px]" style={{ color: "var(--fg-muted)" }}>
             Open a secure reset dialog to change your password.
           </p>
           <button
@@ -153,7 +153,8 @@ export default function AccountDialog({
               setNewPassword("");
               setIsResetDialogOpen(true);
             }}
-            className="mt-3 w-full rounded-xl bg-[#25d366] px-4 py-2.5 text-sm font-semibold text-[#111b21] transition hover:brightness-95"
+            className="mt-3 w-full rounded-xl px-4 py-2.5 text-sm font-semibold transition hover:brightness-95"
+            style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}
           >
             Forgot password
           </button>
@@ -171,12 +172,12 @@ export default function AccountDialog({
       {isResetDialogOpen ? (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-[22rem] rounded-[1.4rem] border border-black/8 bg-white p-5 shadow-2xl dark:border-white/8 dark:bg-[#202c33]">
-            <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                <p className="text-[15px] font-semibold" style={{ color: "var(--foreground)" }}>
                   Change password
                 </p>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-[13px]" style={{ color: "var(--fg-muted)" }}>
                   Enter your email and a new password.
                 </p>
               </div>
@@ -195,14 +196,16 @@ export default function AccountDialog({
                 value={resetEmail}
                 onChange={(event) => setResetEmail(event.target.value)}
                 placeholder="Email"
-                className="w-full rounded-xl border border-transparent bg-[#f7f5f3] px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#25d366] dark:bg-[#111b21] dark:text-slate-100"
+                className="w-full rounded-xl border border-transparent px-4 py-2.5 text-sm outline-none transition"
+                style={{ backgroundColor: "var(--input-bg)", color: "var(--foreground)" }}
               />
               <input
                 type="password"
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
                 placeholder="New password"
-                className="w-full rounded-xl border border-transparent bg-[#f7f5f3] px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#25d366] dark:bg-[#111b21] dark:text-slate-100"
+                className="w-full rounded-xl border border-transparent px-4 py-2.5 text-sm outline-none transition"
+                style={{ backgroundColor: "var(--input-bg)", color: "var(--foreground)" }}
               />
 
             </div>
@@ -219,7 +222,8 @@ export default function AccountDialog({
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleResetPassword}
-                className="flex-1 rounded-xl bg-[#25d366] px-4 py-2.5 text-sm font-semibold text-[#111b21] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+                style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}
               >
                 {isSubmitting ? "Updating..." : "Change password"}
               </button>
@@ -233,10 +237,10 @@ export default function AccountDialog({
           <div className="w-full max-w-[24rem] rounded-[1.4rem] border border-black/8 bg-white p-5 shadow-2xl dark:border-white/8 dark:bg-[#202c33]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                <p className="text-[15px] font-semibold" style={{ color: "var(--foreground)" }}>
                   Color themes
                 </p>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-[13px]" style={{ color: "var(--fg-muted)" }}>
                   Scroll and pick a new look for Voxify.
                 </p>
               </div>
@@ -273,7 +277,7 @@ export default function AccountDialog({
                     />
 
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      <span className="block truncate text-sm font-semibold" style={{ color: "var(--foreground)" }}>
                         {palette.name}
                       </span>
                       <span className="mt-1 flex gap-1.5">

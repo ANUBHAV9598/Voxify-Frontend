@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import EmojiPicker, {
   Theme as EmojiTheme,
   type EmojiClickData,
@@ -10,6 +11,8 @@ import { useTheme } from "next-themes";
 import type { AuthUser } from "@/types/auth";
 import type { User } from "@/types/chat";
 import { useChat } from "@/hooks/useChat";
+import VoxLoader from "@/components/VoxLoader";
+import { socket } from "@/services/socket";
 
 interface ChatBoxProps {
   conversationId: string;
@@ -31,6 +34,7 @@ export default function ChatBox({
   onCopyCallLink,
 }: ChatBoxProps) {
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
   const [input, setInput] = useState("");
   const [showEmojiTray, setShowEmojiTray] = useState(false);
   const emojiTrayRef = useRef<HTMLDivElement | null>(null);
@@ -88,6 +92,23 @@ export default function ChatBox({
     startTyping();
   };
 
+  const handleStartCall = () => {
+    if (!callHref) return;
+
+    // Send call invite to all other participants
+    const otherParticipants = participants.filter((p) => p.id !== currentUser.id);
+    if (otherParticipants.length > 0) {
+      socket.emit("call:invite", {
+        roomId: callHref.split("/").pop()!,
+        recipientIds: otherParticipants.map((p) => p.id),
+        callerId: currentUser.id,
+        callerName: currentUser.name,
+      });
+    }
+
+    router.push(callHref);
+  };
+
   const typingNames = typingUserIds
     .filter((userId) => userId !== currentUser.id)
     .map(
@@ -115,25 +136,25 @@ export default function ChatBox({
         }}
       >
         <div>
-          <p className="text-base font-medium text-slate-900 dark:text-slate-100">
+          <p className="text-[15px] font-semibold" style={{ color: "var(--foreground)" }}>
             {title ?? "Conversation"}
           </p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 text-[13px] leading-snug" style={{ color: "var(--fg-muted)" }}>
             {typingLabel || subtitle || "Messages are synced in realtime"}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {callHref ? (
-            <Link
-              href={callHref}
+            <button
+              onClick={handleStartCall}
               className="inline-flex h-10 items-center justify-center rounded-full px-4 text-sm font-semibold transition hover:brightness-95"
               style={{
                 backgroundColor: "var(--accent)",
                 color: "var(--accent-foreground)",
               }}
             >
-              Join call
-            </Link>
+              Start Call
+            </button>
           ) : null}
           {onCopyCallLink ? (
             <button
@@ -148,7 +169,7 @@ export default function ChatBox({
               Copy link
             </button>
           ) : null}
-          <div className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-xs" style={{ color: "var(--fg-subtle)" }}>
             {messages.length} messages
           </div>
         </div>
@@ -156,11 +177,11 @@ export default function ChatBox({
 
       <div className="flex-1 space-y-3 overflow-y-auto px-6 py-5">
         {isLoading ? (
-          <div className="text-sm text-slate-500 dark:text-slate-400">
-            Loading messages...
+          <div className="flex flex-1 items-center justify-center py-10">
+            <VoxLoader size="sm" label="Loading messages..." />
           </div>
         ) : messages.length === 0 ? (
-          <div className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="text-sm" style={{ color: "var(--fg-subtle)" }}>
             No messages yet. Start the conversation.
           </div>
         ) : (

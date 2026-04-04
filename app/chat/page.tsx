@@ -12,6 +12,8 @@ import ChatLeftPanel from "@/components/chat/ChatLeftPanel";
 import ChatShell from "@/components/chat/ChatShell";
 import ChatWorkspace from "@/components/chat/ChatWorkspace";
 import ChatEmptyState from "@/components/chat/ChatEmptyState";
+import AuthGuard from "@/components/AuthGuard";
+import VoxLoader from "@/components/VoxLoader";
 
 interface UsersResponse {
   users: User[];
@@ -113,45 +115,44 @@ export default function ChatPage() {
     });
   };
 
-  if (isLoading || isPageLoading || !user) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-100 text-slate-600 dark:bg-slate-950 dark:text-slate-300">
-        Loading your chat workspace...
-      </main>
-    );
+  if (isPageLoading || !user) {
+    return <VoxLoader fullScreen label="Loading workspace..." />;
   }
 
   return (
-    <main
-      className="min-h-screen"
-      style={{ backgroundColor: "var(--app-bg)" }}
-    >
-      <PageMotion className="min-h-screen">
-        <ItemMotion className="min-h-screen">
-          <ChatShell
-            leftPanel={
-              <ChatLeftPanel
-                currentUserId={user.id}
-                currentUserName={user.name}
-                currentUserEmail={user.email}
-                conversations={conversations}
-                users={users}
-                onStartConversation={handleStartConversation}
-                onCreateGroup={handleCreateGroup}
-                onOpenConversation={handleOpenConversation}
-                onLogout={handleLogout}
-                isStartingConversation={isStartingConversation}
-                selectedConversationId={null}
-              />
-            }
-            workspace={
-              <ChatWorkspace>
-                <ChatEmptyState />
-              </ChatWorkspace>
-            }
-          />
-        </ItemMotion>
-      </PageMotion>
-    </main>
+    <AuthGuard>
+      <main
+        className="min-h-screen"
+        style={{ backgroundColor: "var(--app-bg)" }}
+      >
+        <PageMotion className="min-h-screen">
+          <ItemMotion className="min-h-screen">
+            <ChatShell
+              leftPanel={
+                <ChatLeftPanel
+                  currentUserId={user.id}
+                  currentUserName={user.name}
+                  currentUserEmail={user.email}
+                  conversations={conversations}
+                  users={users}
+                  onStartConversation={handleStartConversation}
+                  onCreateGroup={handleCreateGroup}
+                  onOpenConversation={handleOpenConversation}
+                  onLogout={handleLogout}
+                  isStartingConversation={isStartingConversation}
+                  selectedConversationId={null}
+                />
+              }
+              workspace={
+                <ChatWorkspace>
+                  <ChatEmptyState />
+                </ChatWorkspace>
+              }
+            />
+          </ItemMotion>
+        </PageMotion>
+      </main>
+    </AuthGuard>
   );
 }
+

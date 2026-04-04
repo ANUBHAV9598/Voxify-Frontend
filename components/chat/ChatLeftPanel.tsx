@@ -124,10 +124,10 @@ export default function ChatLeftPanel({
               {currentUserName.slice(0, 1).toUpperCase()}
             </button>
             <div>
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+              <p className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
                 {currentUserName}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs" style={{ color: "var(--fg-subtle)" }}>
                 Chats
               </p>
             </div>
@@ -183,10 +183,10 @@ export default function ChatLeftPanel({
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                <p className="text-[15px] font-semibold" style={{ color: "var(--foreground)" }}>
                   New group
                 </p>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-[13px]" style={{ color: "var(--fg-muted)" }}>
                   Pick up to 9 people and give the group a name.
                 </p>
               </div>
@@ -243,10 +243,10 @@ export default function ChatLeftPanel({
                       {user.name.slice(0, 1).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+                      <p className="truncate text-sm font-medium" style={{ color: "var(--foreground)" }}>
                         {user.name}
                       </p>
-                      <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                      <p className="truncate text-xs" style={{ color: "var(--fg-subtle)" }}>
                         {user.email}
                       </p>
                     </div>
@@ -312,7 +312,7 @@ export default function ChatLeftPanel({
             <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
               Groups
             </p>
-            {filteredGroups.map((conversation) => {
+              {filteredGroups.map((conversation) => {
               const isSelected = selectedConversationId === conversation.id;
               const memberCount = conversation.members.length;
 
@@ -338,10 +338,10 @@ export default function ChatLeftPanel({
                     {conversation.name?.slice(0, 1).toUpperCase() ?? "G"}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <p className="truncate text-sm font-medium" style={{ color: "var(--foreground)" }}>
                       {conversation.name ?? "Group chat"}
                     </p>
-                    <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                    <p className="truncate text-xs" style={{ color: "var(--fg-subtle)" }}>
                       {memberCount} members
                     </p>
                   </div>
@@ -380,25 +380,36 @@ export default function ChatLeftPanel({
                   backgroundColor: isSelected ? "var(--panel-selected)" : "transparent",
                 }}
               >
-                <div
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-slate-900 dark:text-slate-100"
-                  style={{
-                    backgroundColor: existingConversation
-                      ? "var(--accent-soft)"
-                      : "var(--panel-muted)",
-                    color: existingConversation
-                      ? "var(--accent-foreground)"
-                      : undefined,
-                  }}
-                >
-                  {user.name.slice(0, 1).toUpperCase()}
+                <div className="relative shrink-0">
+                  <div
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold text-slate-900 dark:text-slate-100"
+                    style={{
+                      backgroundColor: existingConversation
+                        ? "var(--accent-soft)"
+                        : "var(--panel-muted)",
+                      color: existingConversation
+                        ? "var(--accent-foreground)"
+                        : undefined,
+                    }}
+                  >
+                    {user.name.slice(0, 1).toUpperCase()}
+                  </div>
+                  <div
+                    className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 ${
+                      user.isOnline ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"
+                    }`}
+                    style={{
+                      borderColor: isSelected ? "var(--panel-selected)" : "var(--panel-bg)",
+                    }}
+                    title={user.isOnline ? "Online" : "Offline"}
+                  />
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+                  <p className="truncate text-sm font-medium" style={{ color: "var(--foreground)" }}>
                     {user.name}
                   </p>
-                  <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                  <p className="truncate text-xs" style={{ color: "var(--fg-subtle)" }}>
                     {isStartingConversation === user.id
                       ? "Opening chat..."
                       : user.email}

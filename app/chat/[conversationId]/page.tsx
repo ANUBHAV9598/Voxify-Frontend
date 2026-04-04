@@ -13,6 +13,8 @@ import { ItemMotion, PageMotion } from "@/components/motion-primitives";
 import ChatLeftPanel from "@/components/chat/ChatLeftPanel";
 import ChatShell from "@/components/chat/ChatShell";
 import ChatWorkspace from "@/components/chat/ChatWorkspace";
+import AuthGuard from "@/components/AuthGuard";
+import VoxLoader from "@/components/VoxLoader";
 
 interface ConversationsResponse {
   conversations: Conversation[];
@@ -166,20 +168,17 @@ export default function ConversationPage() {
   }, [conversation, user]);
 
   if (isLoading || isPageLoading || !user) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-12 text-slate-600 dark:bg-slate-950 dark:text-slate-300">
-        Loading conversation...
-      </main>
-    );
+    return <VoxLoader fullScreen label="Loading conversation..." />;
   }
 
   return (
-    <main
-      className="min-h-screen"
-      style={{ backgroundColor: "var(--app-bg)" }}
-    >
-      <PageMotion className="min-h-screen">
-        <ItemMotion className="min-h-screen">
+    <AuthGuard>
+      <main
+        className="min-h-screen"
+        style={{ backgroundColor: "var(--app-bg)" }}
+      >
+        <PageMotion className="min-h-screen">
+          <ItemMotion className="min-h-screen">
           <ChatShell
             leftPanel={
               <ChatLeftPanel
@@ -227,5 +226,6 @@ export default function ConversationPage() {
         </ItemMotion>
       </PageMotion>
     </main>
+    </AuthGuard>
   );
 }

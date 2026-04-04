@@ -48,11 +48,11 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_#fff7ed,_#e2e8f0_55%,_#cbd5e1)] px-6 py-12 dark:bg-[radial-gradient(circle_at_top,_#1e293b,_#020617_55%,_#020617)]">
       <PageMotion className="w-full max-w-md rounded-[2rem] border border-white/60 bg-white/90 p-8 shadow-xl shadow-slate-300/40 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90 dark:shadow-black/40">
         <ItemMotion className="mb-8">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-amber-600 dark:text-amber-300">
+          <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.22em] text-amber-600 dark:text-amber-400">
             Voxify
           </p>
-          <h1 className="text-3xl font-semibold text-slate-950 dark:text-slate-50">Welcome back</h1>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          <h1 className="text-[1.75rem] font-semibold leading-tight tracking-tight" style={{ color: "var(--foreground)" }}>Welcome back</h1>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--fg-muted)" }}>
             Sign in to continue chatting and join your rooms.
           </p>
         </ItemMotion>
@@ -65,28 +65,30 @@ export default function LoginPage() {
           className="space-y-4"
         >
           <m.label variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="block">
-            <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">
+            <span className="mb-1.5 block text-[13px] font-semibold" style={{ color: "var(--fg-muted)" }}>
               Email
             </span>
             <input
               type="email"
               value={form.email}
               onChange={(event) => handleChange("email", event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-amber-400 focus:bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:bg-slate-950"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-amber-400 focus:bg-white dark:border-slate-700 dark:bg-slate-900 dark:focus:bg-slate-950"
+              style={{ color: "var(--foreground)" }}
               placeholder="you@example.com"
               required
             />
           </m.label>
 
           <m.label variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className="block">
-            <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">
+            <span className="mb-1.5 block text-[13px] font-semibold" style={{ color: "var(--fg-muted)" }}>
               Password
             </span>
             <input
               type="password"
               value={form.password}
               onChange={(event) => handleChange("password", event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-amber-400 focus:bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:bg-slate-950"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-amber-400 focus:bg-white dark:border-slate-700 dark:bg-slate-900 dark:focus:bg-slate-950"
+              style={{ color: "var(--foreground)" }}
               placeholder="Enter your password"
               required
             />
@@ -96,7 +98,7 @@ export default function LoginPage() {
             <m.button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-2xl bg-slate-950 px-4 py-3 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+              className="w-full rounded-2xl bg-amber-400 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-50"
               {...softHover}
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
@@ -104,9 +106,9 @@ export default function LoginPage() {
           </ItemMotion>
         </m.form>
 
-        <ItemMotion className="mt-6 text-sm text-slate-600 dark:text-slate-300">
+        <ItemMotion className="mt-6 text-sm" style={{ color: "var(--fg-muted)" }}>
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-semibold text-amber-700">
+          <Link href="/signup" className="font-semibold text-amber-600 dark:text-amber-400 underline-offset-2 hover:underline">
             Create one
           </Link>
         </ItemMotion>

@@ -11,6 +11,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { ApiError } from "@/services/api";
 import { createCallLink, getCallToken } from "@/services/calls";
 import type { CallTokenResponse } from "@/types/call";
+import AuthGuard from "@/components/AuthGuard";
+import VoxLoader from "@/components/VoxLoader";
 
 export default function CallPage() {
   const params = useParams<{ roomId: string }>();
@@ -63,41 +65,35 @@ export default function CallPage() {
     setUserChoices(null);
   };
 
-  if (isLoading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center text-slate-500 dark:text-slate-400">
-        Preparing your call...
-      </main>
-    );
-  }
-
-  if (!user) {
-    return null;
+  if (isLoading || !user) {
+    return <VoxLoader fullScreen label="Preparing your call..." />;
   }
 
   return (
-    <PageMotion className="min-h-screen">
-      {callSession && userChoices ? (
-        <CallRoomView
-          token={callSession.token}
-          serverUrl={callSession.url}
-          roomName={callSession.roomName}
-          joinLink={joinLink}
-          choices={userChoices}
-          onCopyLink={handleCopyLink}
-          onLeave={handleLeave}
-        />
-      ) : (
-        <CallLobby
-          roomName={roomName}
-          displayName="Video room"
-          defaultUserName={user.name}
-          joinLink={joinLink}
-          isJoining={isJoining}
-          onCopyLink={handleCopyLink}
-          onJoin={handleJoin}
-        />
-      )}
-    </PageMotion>
+    <AuthGuard>
+      <PageMotion className="min-h-screen">
+        {callSession && userChoices ? (
+          <CallRoomView
+            token={callSession.token}
+            serverUrl={callSession.url}
+            roomName={callSession.roomName}
+            joinLink={joinLink}
+            choices={userChoices}
+            onCopyLink={handleCopyLink}
+            onLeave={handleLeave}
+          />
+        ) : (
+          <CallLobby
+            roomName={roomName}
+            displayName="Video room"
+            defaultUserName={user.name}
+            joinLink={joinLink}
+            isJoining={isJoining}
+            onCopyLink={handleCopyLink}
+            onJoin={handleJoin}
+          />
+        )}
+      </PageMotion>
+    </AuthGuard>
   );
 }

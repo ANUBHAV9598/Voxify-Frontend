@@ -103,7 +103,7 @@ export default function CallLobby({
               Pick your mic and camera, then enter the room.
             </p>
           </div>
-          <div className={isJoining ? "pointer-events-none opacity-70" : ""}>
+          <div className={isJoining ? "pointer-events-none opacity-70" : ""} data-lk-theme="default">
             <PreJoin
               defaults={{
                 username: defaultUserName,

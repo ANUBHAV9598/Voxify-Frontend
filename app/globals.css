@@ -1,31 +1,48 @@
 @import "tailwindcss";
+
+/* ─── Dark-mode variant ──────────────────────────────────────────────────── */
+/* next-themes adds .dark on <html>; this covers both direct and descendant  */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─── Light-mode design tokens ───────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --app-bg: #e8f5ef;
-  --workspace-bg: #f6fffb;
-  --panel-bg: #f9fffc;
-  --panel-muted: #edf7f1;
-  --panel-surface: #ffffff;
-  --input-bg: #ffffff;
-  --panel-selected: #daf7e8;
-  --divider: #c6ddd0;
-  --accent: #25d366;
-  --accent-soft: #d8f8e2;
-  --accent-foreground: #0e2d18;
-  --bubble-own: #d7fae3;
-  --bubble-own-foreground: #0d2316;
-  --bubble-other: #ffffff;
+  color-scheme: light;
+
+  /* Surface & backgrounds */
+  --background:      #ffffff;
+  --foreground:      #0f172a;   /* slate-900 – richer than #171717 */
+  --fg-muted:        #475569;   /* slate-600 */
+  --fg-subtle:       #94a3b8;   /* slate-400 */
+
+  /* Chat palette defaults (Mint Bloom light) */
+  --app-bg:          #e8f5ef;
+  --workspace-bg:    #f6fffb;
+  --panel-bg:        #f9fffc;
+  --panel-muted:     #edf7f1;
+  --panel-surface:   #ffffff;
+  --input-bg:        #ffffff;
+  --panel-selected:  #daf7e8;
+  --divider:         #c6ddd0;
+  --accent:          #25d366;
+  --accent-soft:     #d8f8e2;
+  --accent-foreground:       #0e2d18;
+  --bubble-own:              #d7fae3;
+  --bubble-own-foreground:   #0d2316;
+  --bubble-other:            #ffffff;
   --bubble-other-foreground: #162018;
 }
 
+/* ─── Dark-mode overrides ────────────────────────────────────────────────── */
 html.dark {
-  --background: #020617;
-  --foreground: #e2e8f0;
+  color-scheme: dark;
+
+  --background: #020617;    /* slate-950 */
+  --foreground: #e2e8f0;    /* slate-200 */
+  --fg-muted:   #94a3b8;    /* slate-400 */
+  --fg-subtle:  #475569;    /* slate-600 */
 }
 
+/* ─── Tailwind CSS custom theme ──────────────────────────────────────────── */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -33,8 +50,81 @@ html.dark {
   --font-mono: var(--font-geist-mono);
 }
 
+/* ─── Base typography ────────────────────────────────────────────────────── */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background:  var(--background);
+  color:       var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, Arial, sans-serif;
+
+  /* Crisp sub-pixel rendering */
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering:          optimizeLegibility;
+
+  /* OpenType features: ligatures + stylistic set 1 */
+  font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  font-optical-sizing: auto;
+
+  /* Smooth light ↔ dark transition for native elements */
+  transition-property: color, background-color, border-color;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Headings – tighter tracking and slightly heavier weight */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+/* Body copy – comfortable reading measure */
+p {
+  line-height: 1.65;
+}
+
+/* Code */
+code, kbd, pre {
+  font-family: var(--font-geist-mono), "Fira Code", monospace;
+  font-feature-settings: "liga" 0;
+}
+
+/* Smooth colour transitions on interactive elements */
+button, a, input, textarea, select, label {
+  transition-property: color, background-color, border-color, opacity, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus ring – accessible and theme-aware */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Scrollbar – minimal, theme-aware */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--divider);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--fg-subtle); }
+
+/* LiveKit button typography fix */
+.lk-button {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Voxify loader – audio waveform bars */
+@keyframes vox-wave {
+  0%, 100% { transform: scaleY(0.2); opacity: 0.5; }
+  50%       { transform: scaleY(1);   opacity: 1;   }
+}
+
+.vox-wave-bar {
+  transform-origin: center;
+  animation: vox-wave 1.1s ease-in-out infinite;
+}
+
