@@ -83,7 +83,7 @@ export async function apiRequest<T>(
 
     if (response.status === 401 && !path.includes("/login")) {
       clearStoredToken();
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
         window.location.href = "/login";
       }
     }
