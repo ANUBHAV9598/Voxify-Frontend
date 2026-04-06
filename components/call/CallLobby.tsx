@@ -1,6 +1,7 @@
 "use client";
 
 import { PreJoin, type LocalUserChoices } from "@livekit/components-react";
+import { useRouter } from "next/navigation";
 
 interface CallLobbyProps {
   roomName: string;
@@ -21,6 +22,7 @@ export default function CallLobby({
   onCopyLink,
   onJoin,
 }: CallLobbyProps) {
+  const router = useRouter();
   return (
     <div
       className="flex min-h-screen items-center justify-center px-6 py-10"
@@ -35,6 +37,17 @@ export default function CallLobby({
       >
         <div className="flex flex-col justify-between p-8 lg:p-10">
           <div>
+            <button
+              onClick={() => router.push("/chat")}
+              className="mb-6 flex h-9 w-9 items-center justify-center rounded-full text-lg transition hover:bg-black/5 dark:hover:bg-white/10"
+              title="Back to chat"
+              style={{
+                backgroundColor: "var(--panel-surface)",
+                color: "var(--foreground)",
+              }}
+            >
+              ←
+            </button>
             <div
               className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl text-2xl"
               style={{

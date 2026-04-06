@@ -12,6 +12,8 @@ export interface ConversationMember {
   conversationId: string;
   userId: string;
   joinedAt: string;
+  lastReadAt: string;
+  lastDeliveredAt: string;
   user: User;
 }
 
@@ -31,6 +33,7 @@ export interface Conversation {
   createdAt: string;
   members: ConversationMember[];
   messages: Message[];
+  unreadCount?: number;
 }
 
 export interface TypingUpdate {

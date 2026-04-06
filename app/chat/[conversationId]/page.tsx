@@ -7,7 +7,7 @@ import ChatBox from "@/components/Chat";
 import type { Conversation, User } from "@/types/chat";
 import { apiRequest, ApiError } from "@/services/api";
 import { createCallLink, getCallRoomName } from "@/services/calls";
-import { connectSocket } from "@/services/socket";
+import { connectSocket, socket } from "@/services/socket";
 import { useAuth } from "@/hooks/useAuth";
 import { ItemMotion, PageMotion } from "@/components/motion-primitives";
 import ChatLeftPanel from "@/components/chat/ChatLeftPanel";
@@ -91,6 +91,72 @@ export default function ConversationPage() {
         setIsPageLoading(false);
       });
   }, [conversationId, isLoading, router, user]);
+
+  useEffect(() => {
+    const handlePresenceUpdate = (payload: { userId: string; isOnline: boolean; lastSeen: string | null }) => {
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === payload.userId
+            ? {
+                ...u,
+                isOnline: payload.isOnline,
+                lastSeen: payload.lastSeen ?? u.lastSeen ?? "",
+              }
+            : u
+        )
+      );
+    };
+
+    const handleNewNotification = (payload: { message: any; conversationId: string }) => {
+      socket.emit("message:delivered", { conversationId: payload.conversationId });
+      // 1. Always update the left panel counter for the conversation
+      setConversations((prev) =>
+        prev.map((conv) => {
+          if (conv.id === payload.conversationId) {
+             // If we're currently looking at this conversation, keep count at 0
+             const isCurrent = payload.conversationId === conversationId;
+             return { ...conv, unreadCount: isCurrent ? 0 : (conv.unreadCount || 0) + 1 };
+          }
+          return conv;
+        })
+      );
+
+      // 2. Only show a toast if the message is for a DIFFERENT conversation than the one I'm currently looking at
+      if (payload.conversationId !== conversationId) {
+         toast.info(`New message from ${payload.message.sender.name}`, {
+           onClick: () => router.push(`/chat/${payload.conversationId}`)
+         });
+      }
+    };
+
+    const handleReadUpdate = (payload: { conversationId: string; userId: string; lastReadAt: string }) => {
+      if (payload.userId === user?.id) {
+        setConversations((prev) =>
+          prev.map((conv) =>
+            conv.id === payload.conversationId ? { ...conv, unreadCount: 0 } : conv
+          )
+        );
+      }
+    };
+
+    socket.on("presence:update", handlePresenceUpdate);
+    socket.on("notification:new_message", handleNewNotification);
+    socket.on("conversation:read_update", handleReadUpdate);
+    return () => {
+      socket.off("presence:update", handlePresenceUpdate);
+      socket.off("notification:new_message", handleNewNotification);
+      socket.off("conversation:read_update", handleReadUpdate);
+    };
+  }, [conversationId]);
+
+  // Reset unread count for current conversation when it opens
+  useEffect(() => {
+    if (conversationId) {
+      setConversations(prev => prev.map(conv => 
+        conv.id === conversationId ? { ...conv, unreadCount: 0 } : conv
+      ));
+    }
+  }, [conversationId]);
 
   const handleStartConversation = async (targetUserId: string) => {
     setIsStartingConversation(targetUserId);
@@ -213,7 +279,6 @@ export default function ConversationPage() {
                     }
                     participants={conversation?.members.map((member) => member.user) ?? []}
                     callHref={callRoomName ? `/call/${callRoomName}` : undefined}
-                    onCopyCallLink={callRoomName ? handleCopyCallLink : undefined}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center px-10 text-slate-500 dark:text-slate-400">

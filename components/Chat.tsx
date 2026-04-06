@@ -21,7 +21,6 @@ interface ChatBoxProps {
   subtitle?: string;
   participants?: User[];
   callHref?: string;
-  onCopyCallLink?: () => void;
 }
 
 export default function ChatBox({
@@ -31,7 +30,6 @@ export default function ChatBox({
   subtitle,
   participants = [],
   callHref,
-  onCopyCallLink,
 }: ChatBoxProps) {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
@@ -39,7 +37,7 @@ export default function ChatBox({
   const [showEmojiTray, setShowEmojiTray] = useState(false);
   const emojiTrayRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const { messages, sendMessage, isLoading, typingUserIds, startTyping, stopTyping } =
+  const { messages, members, sendMessage, isLoading, typingUserIds, startTyping, stopTyping } =
     useChat(conversationId);
 
   useEffect(() => {
@@ -163,19 +161,6 @@ export default function ChatBox({
               Start Call
             </button>
           ) : null}
-          {onCopyCallLink ? (
-            <button
-              type="button"
-              onClick={onCopyCallLink}
-              className="inline-flex h-10 items-center justify-center rounded-full px-4 text-sm font-medium transition hover:brightness-95"
-              style={{
-                backgroundColor: "var(--panel-surface)",
-                color: "var(--foreground)",
-              }}
-            >
-              Copy link
-            </button>
-          ) : null}
           <div className="text-xs" style={{ color: "var(--fg-subtle)" }}>
             {messages.length} messages
           </div>
@@ -215,12 +200,49 @@ export default function ChatBox({
                     {isOwnMessage ? "You" : message.sender.name}
                   </p>
                   <p className="break-words text-sm leading-6">{message.content}</p>
-                  <p className="mt-2 text-[11px] opacity-60">
-                    {new Date(message.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <p className="text-[11px] opacity-60">
+                      {new Date(message.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                    {isOwnMessage && (
+                      <div className="flex items-center">
+                        {(() => {
+                          const otherMembers = Object.entries(members).filter(([uid]) => uid !== currentUser.id);
+                          if (otherMembers.length === 0) return null;
+
+                          const isReadByAll = otherMembers.every(([_, status]) => 
+                            new Date(status.lastReadAt) >= new Date(message.createdAt)
+                          );
+                          const isDeliveredToAll = otherMembers.every(([_, status]) => 
+                            new Date(status.lastDeliveredAt) >= new Date(message.createdAt)
+                          );
+
+                          if (isReadByAll) {
+                            return (
+                              <span className="text-[14px] leading-none text-sky-400" title="Read">
+                                ✓✓
+                              </span>
+                            );
+                          }
+                          if (isDeliveredToAll) {
+                            return (
+                              <span className="text-[14px] leading-none opacity-60" title="Delivered">
+                                ✓✓
+                              </span>
+                            );
+                          }
+                          return (
+                            <span className="text-[14px] leading-none opacity-60" title="Sent">
+                              ✓
+                            </span>
+                          );
+                        })()}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import type { Conversation, User } from "@/types/chat";
 import { apiRequest, ApiError } from "@/services/api";
-import { connectSocket } from "@/services/socket";
+import { connectSocket, socket } from "@/services/socket";
 import { useAuth } from "@/hooks/useAuth";
 import { ItemMotion, PageMotion } from "@/components/motion-primitives";
 import ChatLeftPanel from "@/components/chat/ChatLeftPanel";
@@ -62,6 +62,55 @@ export default function ChatPage() {
         setIsPageLoading(false);
       });
   }, [isLoading, router, user]);
+
+  useEffect(() => {
+    const handlePresenceUpdate = (payload: { userId: string; isOnline: boolean; lastSeen: string | null }) => {
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === payload.userId
+            ? {
+                ...u,
+                isOnline: payload.isOnline,
+                lastSeen: payload.lastSeen ?? u.lastSeen ?? "",
+              }
+            : u
+        )
+      );
+    };
+
+    const handleNewNotification = (payload: { message: any; conversationId: string }) => {
+      socket.emit("message:delivered", { conversationId: payload.conversationId });
+      setConversations((prev) =>
+        prev.map((conv) => {
+          if (conv.id === payload.conversationId) {
+             return { ...conv, unreadCount: (conv.unreadCount || 0) + 1 };
+          }
+          return conv;
+        })
+      );
+      
+      toast.info(`New message from ${payload.message.sender.name}`, {
+        onClick: () => router.push(`/chat/${payload.conversationId}`)
+      });
+    };
+
+    const handleReadUpdate = (payload: { conversationId: string; userId: string; lastReadAt: string }) => {
+      if (payload.userId === user?.id) {
+        setConversations(prev => prev.map(conv => 
+          conv.id === payload.conversationId ? { ...conv, unreadCount: 0 } : conv
+        ));
+      }
+    };
+
+    socket.on("presence:update", handlePresenceUpdate);
+    socket.on("notification:new_message", handleNewNotification);
+    socket.on("conversation:read_update", handleReadUpdate);
+    return () => {
+      socket.off("presence:update", handlePresenceUpdate);
+      socket.off("notification:new_message", handleNewNotification);
+      socket.off("conversation:read_update", handleReadUpdate);
+    };
+  }, []);
 
   const handleStartConversation = async (targetUserId: string) => {
     setIsStartingConversation(targetUserId);

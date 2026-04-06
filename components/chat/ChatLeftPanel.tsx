@@ -341,9 +341,19 @@ export default function ChatLeftPanel({
                     <p className="truncate text-sm font-medium" style={{ color: "var(--foreground)" }}>
                       {conversation.name ?? "Group chat"}
                     </p>
-                    <p className="truncate text-xs" style={{ color: "var(--fg-subtle)" }}>
-                      {memberCount} members
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="truncate text-xs" style={{ color: "var(--fg-subtle)" }}>
+                        {memberCount} members
+                      </p>
+                      {conversation.unreadCount ? (
+                        <div 
+                          className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full px-1.5 text-[10px] font-bold"
+                          style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}
+                        >
+                          {conversation.unreadCount}
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 </button>
               );
@@ -409,11 +419,21 @@ export default function ChatLeftPanel({
                   <p className="truncate text-sm font-medium" style={{ color: "var(--foreground)" }}>
                     {user.name}
                   </p>
-                  <p className="truncate text-xs" style={{ color: "var(--fg-subtle)" }}>
-                    {isStartingConversation === user.id
-                      ? "Opening chat..."
-                      : user.email}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-xs" style={{ color: "var(--fg-subtle)" }}>
+                      {isStartingConversation === user.id
+                        ? "Opening chat..."
+                        : user.email}
+                    </p>
+                    {existingConversation?.unreadCount ? (
+                      <div 
+                        className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full px-1.5 text-[10px] font-bold"
+                        style={{ backgroundColor: "var(--accent)", color: "var(--accent-foreground)" }}
+                      >
+                        {existingConversation.unreadCount}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </button>
             );
